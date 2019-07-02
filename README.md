@@ -22,3 +22,15 @@ On Windows: [deploy-to-azure.ps1](./deploy-to-azure.ps1)
 
 1. Create the app with `dotnet new mvc`
 2. Create the Docker configuration file
+
+Alternatively, an empty project:
+
+```
+mkdir <projectname>
+dotnet new web
+dotnet publish -c Release -o out
+docker build -t samplewebapp .
+docker image ls
+docker run -d -p 5000:80 --name myapp samplewebapp
+docker rm -f myapp
+```
