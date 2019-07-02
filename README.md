@@ -27,6 +27,7 @@ Alternatively, an empty project:
 
 ```
 mkdir <projectname>
+cd <projectname>
 dotnet new web
 dotnet publish -c Release -o out
 docker build -t samplewebapp .
