@@ -1,6 +1,6 @@
 # Azure Docker app
 
-![dotnet](https://github.com/epomatti/azure-docker-aspnetcore-app/actions/workflows/dotnet/badge.svg)
+![dotnet](https://github.com/epomatti/azure-docker-aspnetcore-app/actions/workflows/dotnet.yml/badge.svg)
 
 A simple docker app that deploys a local Docker image to remote Azure Container Registry.
 
