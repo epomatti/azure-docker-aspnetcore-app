@@ -2,6 +2,8 @@
 
 A simple docker app that deploys a local Docker image to remote Azure Container Registry.
 
+<img src=".docs/diagram.png" width=600/>
+
 Requirements: .NET Core 6, Azure CLI, Docker
 
 ## Building your image
@@ -83,9 +85,6 @@ Your application should be available at http://yourappdns.eastus.azurecontainer.
 To enable HTTPS for Container Instances in Production, [additional steps](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-container-group-ssl) are required.
 
 <img src=".docs/demo.png" width=400/>
-
-
-
 
 ## Destroy the resources
 
