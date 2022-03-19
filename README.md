@@ -60,7 +60,7 @@ az acr update -n $acr --admin-enabled true
 az acr credential show --name $acr --query "passwords[0].value"
 ```
 
-Set the name for your container instance?
+Set the name for your container instance:
 
 ```bash
 dns='yourappdns'
