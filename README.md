@@ -1,37 +1,96 @@
 # Azure Docker app
 
-A simple docker app that deploys to Azure Container Registry.
+A simple docker app that deploys a local Docker image to remote Azure Container Registry.
 
-Requirements:
+Requirements: .NET Core 6, Azure CLI, Docker
 
-* .NET Core SDK
-* Azure CLI
-* Docker client
+## Building your image
 
-## Run it
+```bash
+dotnet publish -c Release
+docker build . --tag aspcontainers
+```
 
-1. `dotnet publish -c Release`
-2. `docker build ./bin/release/netcoreapp2.2/publish --tag aspcontainers -f Dockerfile`
-3. `docker run -d -p 5000:80 --name asplocal aspcontainers`
+To run your image locally:
+
+```bash
+docker run -d -p 5000:80 aspcontainers
+```
 
 ## Publish to Azure
 
-On Windows: [deploy-to-azure.ps1](./deploy-to-azure.ps1)
+Steps to publish your built image to ACR and hosting on ACI.
 
-## Build it from stratch
+Set the common environment variables (change values as you need):
 
-1. Create the app with `dotnet new mvc`
-2. Create the Docker configuration file
-
-Alternatively, an empty project:
-
+```bash
+# Create Azure Container Registry
+export rg='rg-dotnetapp'
+export acr='acrdotnetapp'
+export aci='acidotnetapp'
+export location='eastus'
 ```
-mkdir <projectname>
-cd <projectname>
-dotnet new web
-dotnet publish -c Release -o out
-docker build -t samplewebapp .
-docker image ls
-docker run -d -p 5000:80 --name myapp samplewebapp
-docker rm -f myapp
+
+Login to Azure, create the ACR and push the docker image:
+
+```bash
+# login to Azure from the CLI
+az login
+
+# create the resource group
+az group create --name $rg --location $location --output Table
+
+# create the container registry
+az acr create --name $acr --resource-group $rg --sku Basic --output Table
+
+# push to acr
+az acr login --name $acr
+docker tag aspcontainers "$acr.azurecr.io/aspcontainers"
+docker push "$acr.azurecr.io/aspcontainers"
+```
+
+Get the and set it to a variable `export acrpass='<.....>'`
+
+```bash
+az acr update -n $acr --admin-enabled true
+az acr credential show --name $acr --query "passwords[0].value"
+```
+
+Set the name for your container instance?
+
+```bash
+dns='yourappdns'
+```
+
+Finally, create your container instance:
+
+```bash
+az container create \
+  --resource-group $rg \
+  --name $aci \
+  --image "$acr.azurecr.io/aspcontainers:latest" \
+  --cpu 2 \
+  --memory 2 \
+  --registry-login-server "$acr.azurecr.io" \
+  --registry-username $acr \
+  --registry-password $acrpass \
+  --dns-name-label $dns \
+  --ports 80 \
+  --location $location
+```
+
+Your application should be available at http://yourappdns.eastus.azurecontainer.io. 
+To enable HTTPS for Container Instances in Production, [additional steps](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-container-group-ssl) are required.
+
+<img src=".docs/demo.png" width=400/>
+
+
+
+
+## Destroy the resources
+
+Don't forget to clean your resources to avoid unwanted costs:
+
+```bash
+az group delete -n $rg
 ```

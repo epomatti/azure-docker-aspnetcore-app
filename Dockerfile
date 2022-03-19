@@ -1,6 +1,4 @@
-FROM microsoft/dotnet:2.2-aspnetcore-runtime
-
-ENTRYPOINT [ "dotnet", "Containers.dll" ]
-ARG source=.
-WORKDIR /app
-COPY $source .
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
+COPY ./bin/Release/net6.0/publish/ App/
+WORKDIR /App
+ENTRYPOINT ["dotnet", "azure-docker-aspnetcore-app.dll"]
