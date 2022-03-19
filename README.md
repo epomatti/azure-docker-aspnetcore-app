@@ -8,6 +8,12 @@ A simple docker app that deploys a local Docker image to remote Azure Container 
 
 Requirements: .NET Core 6, Azure CLI, Docker
 
+## Running locally
+
+```bash
+dotnet run
+```
+
 ## Building your image
 
 ```bash
@@ -15,7 +21,7 @@ dotnet publish -c Release
 docker build . --tag aspcontainers
 ```
 
-To run your image locally:
+To run your docker image locally:
 
 ```bash
 docker run -d -p 5000:80 aspcontainers
